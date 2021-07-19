@@ -1,0 +1,60 @@
+mode: XGaze
+device: cuda
+dataset:
+  dataset_dir: /home/data/tbw_data/
+model:
+  name: RepVGG-D2se
+  weights: ./ckpt/RepVGG-D2se-200epochs-train.pth
+train:
+  distributed: True
+  multiprocessing_distributed: True
+  world_size: 1
+  ngpus_per_node: 3
+  dist_url: nccl
+  rank: 0
+  dist_backend: 
+  print_freq: 500
+  resume: 
+  no_weight_decay_on_bn: False
+  batch_size: 88
+  shuffle: True
+  ckpt_dir: ./ckpt/repvgg_d2se/exp05
+  log_period: 100
+  checkpoint_period: 10
+  use_tensorboard: True
+  dataset_split: [0.85,0.1,0.05]
+  use_gpu: True
+  train_dataloader:
+    num_workers: 40
+    drop_last: True
+    pin_memory: False
+val:
+  val_dataloader:
+    num_workers: 20
+    pin_memory: False
+  batch_size: 64
+test:
+  test_dataloader:
+    num_workers: 20
+    pin_memory: False
+  batch_size: 64
+scheduler:
+  start_epoch: 0
+  epochs: 40
+  type: multistep
+  milestones: [30, 35]
+optimizer:
+  init_lr: 0.001
+  lr_patience: 5
+  lr_decay_factor: 0.1
+  lr_decay: 0.1
+  lr_min_factor: 0.001
+  momentum: 0.9
+  weight_decay: 0.01
+seed: 1234
+cudnn:
+  benchmark: True
+  deterministic: False
+  gpu: 0,1,2,3
+log:
+  log_dir: ./log_dir
